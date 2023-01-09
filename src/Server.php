@@ -259,7 +259,7 @@ final class Server
                     return $reader->readByte();
                 })->then(function ($length) use ($reader) {
                     return $reader->readLength($length);
-                })->then(function ($username) use ($reader, $auth, $stream, &$remote, $stream) {
+                })->then(function ($username) use ($reader, $auth, $stream, &$remote) {
                     return $reader->readByte()->then(function ($length) use ($reader) {
                         return $reader->readLength($length);
                     })->then(function (
@@ -273,7 +273,7 @@ final class Server
                             $remote = str_replace('://', '://' . rawurlencode($username) . ':' . rawurlencode($password) . '@', $remote);
                         }
 
-                        return $auth($username, $password, $remote)->then(function ($authenticated) use ($stream) {
+                        return $auth($username, $password, $remote, $stream)->then(function ($authenticated) use ($stream) {
                             if ($authenticated) {
                                 // accept auth
                                 $stream->write(pack('C2', 0x01, 0x00));
