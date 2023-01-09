@@ -81,10 +81,11 @@ final class Server
                 #[\SensitiveParameter]
                 $password,
                 #[\SensitiveParameter]
-                $remote
+                $remote,
+                $connection
             ) use ($auth) {
                 return  \React\Promise\resolve(
-                    \call_user_func($auth, $username, $password, $remote)
+                    \call_user_func($auth, $username, $password, $remote, $connection)
                 );
             };
         } elseif ($auth !== null) {
@@ -258,7 +259,7 @@ final class Server
                     return $reader->readByte();
                 })->then(function ($length) use ($reader) {
                     return $reader->readLength($length);
-                })->then(function ($username) use ($reader, $auth, $stream, &$remote) {
+                })->then(function ($username) use ($reader, $auth, $stream, &$remote, $stream) {
                     return $reader->readByte()->then(function ($length) use ($reader) {
                         return $reader->readLength($length);
                     })->then(function (
